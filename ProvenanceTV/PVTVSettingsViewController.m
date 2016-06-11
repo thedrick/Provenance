@@ -22,6 +22,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *autoLoadValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *versionValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modeValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *recentGamesValueLabel;
 
 @end
 
@@ -39,7 +40,10 @@
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
     [self.autoSaveValueLabel setText:([settings autoSave]) ? @"On" : @"Off"];
     [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
-    [self.versionValueLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
+    [self.recentGamesValueLabel setText:([settings showRecentGames]) ? @"On" : @"Off"];
+	NSString *versionText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+	versionText = [versionText stringByAppendingFormat:@" (%@)", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]];
+	[self.versionValueLabel setText:versionText];
 #if DEBUG
     [self.modeValueLabel setText:@"DEBUG"];
 #else
@@ -110,7 +114,12 @@
                     [self.navigationController pushViewController:conflictViewController animated:YES];
                     break;
                 }
-                    
+                case 3: {
+                    // auto load
+                    [settings setShowRecentGames:![settings showRecentGames]];
+                    [self.recentGamesValueLabel setText:([settings showRecentGames]) ? @"On" : @"Off"];
+                    break;
+                }
                 default:
                     break;
             }
